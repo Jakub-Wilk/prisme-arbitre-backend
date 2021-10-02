@@ -1,4 +1,5 @@
 from .models import ArbiterProfile
+from django.http import HttpResponse
 from .serializers import ArbiterProfileSerializer
 from rest_framework import permissions
 from rest_framework import viewsets
@@ -6,7 +7,8 @@ from rest_framework import mixins
 from rest_framework.response import Response
 
 
-class ArbiterViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet):
+class ArbiterViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.DestroyModelMixin,
+                     viewsets.GenericViewSet):
     queryset = ArbiterProfile.objects.all()
     serializer_class = ArbiterProfileSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
@@ -16,3 +18,7 @@ class ArbiterViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.
         queryset = ArbiterProfile.objects.all()
         serializer = ArbiterProfileSerializer(queryset, many=True)
         return Response(serializer.data)
+
+
+def generate_arbiters(request):
+    return HttpResponse("test")
