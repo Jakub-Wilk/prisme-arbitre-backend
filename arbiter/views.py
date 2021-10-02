@@ -1,9 +1,12 @@
 import json, random
+
+from django.contrib.auth.models import User
+
 from .jwt import CustomTokenObtainPairSerializer
 from .models import ArbiterProfile, Location
 from django.shortcuts import render
 from django.contrib.staticfiles.storage import staticfiles_storage
-from .serializers import ArbiterProfileSerializer
+from .serializers import ArbiterProfileSerializer, CreateUserProfileSerializer
 from rest_framework import viewsets
 from rest_framework import mixins
 from rest_framework.views import APIView
@@ -33,6 +36,12 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
 
+class UserViewSet(mixins.CreateModelMixin,viewsets.GenericViewSet):
+    queryset = User.objects.all()
+    serializer_class = CreateUserProfileSerializer
+
+
+
 class GenerateArbiters(APIView):
     # permission_classes = (IsAuthenticatedOrReadOnly,)
     renderer_classes = (TemplateHTMLRenderer,)
@@ -54,8 +63,10 @@ class GenerateArbiters(APIView):
                 arbiter.location = location
                 arbiter.nationality = random.choice(random_choices["nationalities"])
                 arbiter.save()
-            return Response({"stage": "confirm", "arbiters": ArbiterProfile.objects.all().values(), "amount": amount}, template_name="generate-arbiters-intermediate.html")
+            return Response({"stage": "confirm", "arbiters": ArbiterProfile.objects.all().values(), "amount": amount},
+                            template_name="generate-arbiters-intermediate.html")
 
 
 def get_arbiters_form(request):
-        return render(request, "generate-arbiters-intermediate.html", {"stage": "entry", "arbiters": ArbiterProfile.objects.all().values()})
+    return render(request, "generate-arbiters-intermediate.html",
+                  {"stage": "entry", "arbiters": ArbiterProfile.objects.all().values()})

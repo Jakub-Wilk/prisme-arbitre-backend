@@ -1,7 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
-
 from .models import ArbiterProfile
 
 
@@ -18,3 +17,15 @@ class UserSerializer(ModelSerializer):
         model = User
         depth = 1
         fields = ('id', "username", "date_joined", "arbiter_profile")
+
+
+class CreateUserProfileSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'password')
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def create(self, validated_data):
+        user = User.objects.create_user(**validated_data)
+        ArbiterProfile.objects.create(user=user)
+        return user

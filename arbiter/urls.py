@@ -1,9 +1,10 @@
 from django.urls import include, path
 from rest_framework import routers
-from .views import ArbiterViewSet, GenerateArbiters, get_arbiters_form
+from .views import ArbiterViewSet, GenerateArbiters, get_arbiters_form, UserViewSet
 
 router = routers.DefaultRouter()
 router.register("arbiter", ArbiterViewSet)
+router.register("user", UserViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),
