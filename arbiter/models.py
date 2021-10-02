@@ -2,12 +2,22 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+# User
+# first_name
+# last_name
+# email
+# date_joined
+# username
+# is_staff
+
 class ArbiterProfile(models.Model):
-    photo = models.ImageField(blank=True, null=True)
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="arbiter_profile")
+    photo = models.ImageField(blank=True, null=True, upload_to="photos/")
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="arbiter_profile", null=True, blank=True)
     verified = models.BooleanField(default=False)
-    court = models.ForeignKey("Court", related_name="arbiters", on_delete=models.CASCADE)
-    email = models.EmailField(blank=False, null=False)
+    first_name = models.CharField(max_length=255, null=True, blank=True)
+    last_name = models.CharField(max_length=255, null=True, blank=True)
+    court = models.ForeignKey("Court", related_name="arbiters", on_delete=models.CASCADE, null=True, blank=True)
+    email = models.EmailField(blank=True, null=True)
     nationality = models.CharField(blank=True, null=True, max_length=255)
     description = models.CharField(blank=True, null=True, max_length=255)
     active = models.BooleanField(default=False, blank=True, null=True)
@@ -16,8 +26,14 @@ class ArbiterProfile(models.Model):
         return f"{self.pk} - Arbiter Profile"
 
 
+class Document(models.Model):
+    arbiter = models.ForeignKey("ArbiterProfile", blank=False, null=False, on_delete=models.CASCADE)
+    file = models.FileField(blank=False, null=False, upload_to="documents/")
+    name = models.CharField(max_length=255, blank=True, null=True)
+
+
 class Language(models.Model):
-    arbiter = models.ForeignKey(ArbiterProfile, related_name="languages", on_delete=models.CASCADE)
+    arbiter = models.ManyToManyField(ArbiterProfile, related_name="languages", blank=True)
     name = models.CharField(max_length=255)
 
     def __str__(self):
@@ -25,7 +41,7 @@ class Language(models.Model):
 
 
 class Specialization(models.Model):
-    arbiter = models.ManyToManyField(ArbiterProfile, related_name="specializations", blank=True, null=True)
+    arbiter = models.ManyToManyField(ArbiterProfile, related_name="specializations", blank=True)
     name = models.CharField(max_length=255)
 
     def __str__(self):

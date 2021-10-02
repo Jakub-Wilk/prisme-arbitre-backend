@@ -1,11 +1,14 @@
 from django.contrib import admin
-from .models import ArbiterProfile, Court, Language, Experience, Specialization
+from .models import ArbiterProfile, Court, Language, Experience, Specialization, Document
 from django.db.models import Sum
-from django.contrib.auth.models import User
 
-class LanguageInline(admin.StackedInline):
-    model = Language
-    extra = 0
+
+class DocumentInline(admin.StackedInline):
+    model = Document
+
+
+class LanguageInline(admin.TabularInline):
+    model = Language.arbiter.through
 
 
 class ExperienceInline(admin.StackedInline):
@@ -18,7 +21,7 @@ class SpecializationInline(admin.TabularInline):
 
 
 class ArbiterProfileAdmin(admin.ModelAdmin):
-    list_display = ("id","get_name","verified", "email", "nationality", "active", "get_experience")
+    list_display = ("id", "get_name", "verified", "email", "nationality", "active", "get_experience")
     filter_horizontal = ("specializations",)
 
     def get_name(self, obj):
@@ -30,7 +33,7 @@ class ArbiterProfileAdmin(admin.ModelAdmin):
     get_name.short_description = "name"
     get_experience.short_description = "Months of experience"
 
-    inlines = (LanguageInline, ExperienceInline, SpecializationInline)
+    inlines = (LanguageInline, ExperienceInline, SpecializationInline, DocumentInline)
 
 
 admin.site.register(ArbiterProfile, ArbiterProfileAdmin)
