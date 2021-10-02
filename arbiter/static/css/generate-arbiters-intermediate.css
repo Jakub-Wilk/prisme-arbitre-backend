@@ -1,0 +1,14 @@
+body {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.prompt {
+    font-size: 2rem;
+    margin-bottom: 3rem;
+    font-family: "Montserrat", "Verdana", sans-serif;
+}

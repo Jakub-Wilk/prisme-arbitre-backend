@@ -1,0 +1,21 @@
+<head>
+    {% if stage == "entry" %}
+        <title>Wygeneruj arbitrów</title>
+    {% else %}
+        <title>Sukces!</title>
+    {% endif %}
+        {% load static %}
+        <link rel="stylesheet" href="{% static "css/generate-arbiters-intermediate.css" %}">
+</head>
+<body>
+    {% if stage == "entry" %}
+        <div class="prompt">Ilu arbitrów chcesz wygenerować?</div>
+        <form action="{% url "generate-arbiters" %}" method="POST" target="_self" onsubmit="return confirm('Are you sure you want to submit the form?');">
+            {% csrf_token %}
+            <input type="number" name="amount">
+            <input type="submit">
+        </form>
+    {% else %}
+        <div class="success">Pomyślnie dodano {{ amount }} arbitr{% if amount == 1 %}a{% else %}ów{% endif %}</div>
+    {% endif %}
+</body>
