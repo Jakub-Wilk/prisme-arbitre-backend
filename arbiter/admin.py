@@ -1,6 +1,8 @@
 from django.contrib import admin
 from .models import ArbiterProfile, Court, Language, Experience, Specialization, Document, Location
 from django.db.models import Sum
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 
 class DocumentInline(admin.StackedInline):
@@ -40,6 +42,9 @@ class ArbiterProfileAdmin(admin.ModelAdmin):
 
     inlines = (LanguageInline, ExperienceInline, SpecializationInline, DocumentInline)
 
+def generate_random_arbiters(*args):
+    return HttpResponseRedirect(reverse("get-arbiters-form"))
+
 
 admin.site.register(ArbiterProfile, ArbiterProfileAdmin)
 admin.site.register(Court)
@@ -47,3 +52,4 @@ admin.site.register(Language)
 admin.site.register(Experience)
 admin.site.register(Specialization)
 admin.site.register(Location)
+admin.site.add_action(generate_random_arbiters)
