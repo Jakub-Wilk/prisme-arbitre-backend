@@ -14,6 +14,7 @@ class ArbiterProfile(models.Model):
     photo = models.ImageField(blank=True, null=True, upload_to="photos/")
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="arbiter_profile", null=True, blank=True)
     verified = models.BooleanField(default=False)
+    location = models.OneToOneField("Location", on_delete=models.CASCADE, blank=True, null=True)
     first_name = models.CharField(max_length=255, null=True, blank=True)
     last_name = models.CharField(max_length=255, null=True, blank=True)
     court = models.ForeignKey("Court", related_name="arbiters", on_delete=models.CASCADE, null=True, blank=True)
@@ -25,6 +26,10 @@ class ArbiterProfile(models.Model):
     def __str__(self):
         return f"{self.pk} - Arbiter Profile"
 
+class Location(models.Model):
+    name = models.CharField(max_length=255)
+    lat = models.FloatField(blank=True, null=True)
+    long = models.FloatField(blank=True, null=True)
 
 class Document(models.Model):
     arbiter = models.ForeignKey("ArbiterProfile", blank=False, null=False, on_delete=models.CASCADE)
