@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ArbiterProfile, Court, Language, Experience, Specialization, Document
+from .models import ArbiterProfile, Court, Language, Experience, Specialization, Document, Location
 from django.db.models import Sum
 
 
@@ -25,7 +25,12 @@ class ArbiterProfileAdmin(admin.ModelAdmin):
     filter_horizontal = ("specializations",)
 
     def get_name(self, obj):
-        return obj.user.get_full_name()
+        name = "None"
+        try:
+            name = obj.user.get_full_name()
+        except:
+            pass
+        return name
 
     def get_experience(self, obj):
         return obj.experience.aggregate(Sum("period"))['period__sum']
@@ -41,3 +46,4 @@ admin.site.register(Court)
 admin.site.register(Language)
 admin.site.register(Experience)
 admin.site.register(Specialization)
+admin.site.register(Location)
