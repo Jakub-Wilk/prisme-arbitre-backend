@@ -197,7 +197,6 @@ def get_relevant_arbiters(user_data):
         if user_data.get("languages", False) and arbiter.languages:
             languages = (
             map(lambda n: Language.objects.filter(name=n).first(), json.loads(user_data["languages"].lower())), list(arbiter.languages.all()))
-            # print(list(languages[0]))
             languages = list(map(lambda n: map(lambda m: m.name, n), languages))
             relevant_languages = set(list(languages[0])) & set(list(languages[1]))
             print(relevant_languages)
