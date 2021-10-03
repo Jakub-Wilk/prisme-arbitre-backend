@@ -7,7 +7,7 @@ body {
     justify-content: center;
 }
 
-.prompt {
+.prompt, .success {
     font-size: 2rem;
     margin-bottom: 3rem;
     font-family: "Montserrat", "Verdana", sans-serif;

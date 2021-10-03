@@ -1,37 +1,31 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
-from .models import ArbiterProfile, Language, Court, Location, Specialization, Experience
+from .models import ArbiterProfile, Language, Court, Location, Specialization
 
 
 class LanguageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Language
-        fields = ["name", ]
+        fields = ["id", "name"]
 
 
 class SpecializationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Specialization
-        fields = ["name", ]
-
-
-class ExperienceSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Experience
-        fields = ["name", "description", "period"]
+        fields = ["id", "name"]
 
 
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
-        fields = ["name", "lat", "long"]
+        fields = ["id", "name", "lat", "long"]
 
 
 class CourtSerializer(serializers.ModelSerializer):
     class Meta:
         model = Court
-        fields = ["location", "address"]
+        fields = ["id", "location", "address"]
 
 
 class SimpleArbiterProfileSerializer(serializers.ModelSerializer):
@@ -42,7 +36,6 @@ class SimpleArbiterProfileSerializer(serializers.ModelSerializer):
 
 class ArbiterProfileSerializer(serializers.ModelSerializer):
     specializations = SpecializationSerializer(many=True, required=False)
-    experience = ExperienceSerializer(many=True, required=False)
 
     class Meta:
         model = ArbiterProfile
