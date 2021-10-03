@@ -97,6 +97,8 @@ class LoadArbitersFromJSON(APIView):
             data2 = json.loads(file.read())
             for i in data2:
                 i["court"] = "Sąd Arbitrażowy przy Konfederacji Lewiatan"
+        with open(staticfiles_storage.path("json/locations.json"), "r", encoding="utf-8") as file:
+            location_data = json.loads(file.read())
         data = data1 + data2
         for person in data:
             arbiter = ArbiterProfile()
@@ -133,6 +135,8 @@ class LoadArbitersFromJSON(APIView):
                             location = existing_location.first()
                         else:
                             location = Location(name=value.lower())
+                            if value.lower() in location_data.keys():
+                                location.lat, location.long = location_data[value.lower()]
                             location.save()
                         arbiter.location = location
                     elif key == "court":
@@ -180,34 +184,34 @@ def calculate_distance_between(location1, location2):
 def get_relevant_arbiters(user_data):
     def determine_relevance(arbiter):
         relevance = 0
-        if "location" in user_data.keys() and arbiter.location:
-            locations = (Location.objects.filter(name=user_data["location"]).first(), arbiter.location)
+        if user_data.get("location", False) and arbiter.location:
+            locations = (Location.objects.filter(name=user_data["location"].lower()).first(), arbiter.location)
             location_count = sum(map(lambda n: 1 if n.lat and n.long else 0, locations))
             if location_count == 2:
                 distance = calculate_distance_between(locations[0], locations[1])
-                relevance += (abs(distance - 700) / 700) * 100
+                relevance += 100 / (0.01 * distance + 1)
             elif user_data["court"] and arbiter.court:
-                locations = (Court.objects.filter(name=user_data["court"]).first().location, arbiter.court.location)
+                locations = (Court.objects.filter(name=user_data["court"].lower()).first().location, arbiter.court.location)
                 distance = calculate_distance_between(locations[0], locations[1])
-                relevance += (abs(distance - 700) / 700) * 100
-        if "languages" in user_data.keys() and arbiter.languages:
+                relevance += 100 / (0.01 * distance + 1)
+        if user_data.get("languages", False) and arbiter.languages:
             languages = (
-            map(lambda n: Language.objects.filter(name=n).first(), user_data["languages"]), arbiter.languages)
+            map(lambda n: Language.objects.filter(name=n).first(), user_data["languages"].lower()), arbiter.languages)
             languages = list(map(lambda n: map(lambda m: m.name, n), languages))
             relevant_languages = set(list(languages[0]) + list(languages[1]))
             relevance += len(relevant_languages) * 50
-        if "specializations" in user_data.keys() and arbiter.specializations:
+        if user_data.get("specializations", False) and arbiter.specializations:
             specializations = (
-            map(lambda n: Specialization.objects.filter(name=n).first(), user_data["specializations"]),
+            map(lambda n: Specialization.objects.filter(name=n).first(), user_data["specializations"].lower()),
             arbiter.specializations)
             specializations = list(map(lambda n: map(lambda m: m.name, n), specializations))
             relevant_specializations = set(list(specializations[0]) + list(specializations[1]))
             relevance += len(relevant_specializations) * 50
-        if "court" in user_data.keys() and arbiter.court:
-            court = Court.objects.filter(name=user_data["court"]).first()
+        if user_data.get("court", False) and arbiter.court:
+            court = Court.objects.filter(name=user_data["court"].lower()).first()
             if arbiter.court.name == court.name:
                 relevance += 500
-        if "degree" in user_data.keys():
+        if user_data.get("degree", False):
             if arbiter.degree:
                 relevance += 200
         relevance += (100 * arbiter.votes) / (arbiter.votes + 100)
