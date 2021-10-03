@@ -52,7 +52,7 @@ class GenerateArbiters(APIView):
         if request.data == {}:
             return Response(request.data, status=404, template_name="404.html")
         else:
-            with open(staticfiles_storage.url("json/random_choices.json"), "r", encoding="utf-8") as file:
+            with open(staticfiles_storage.path("json/random_choices.json"), "r", encoding="utf-8") as file:
                 random_choices = json.loads(file.read())
             sex = random.choice(("f", "m"))
             amount = int(request.data["amount"])
