@@ -190,22 +190,24 @@ def get_relevant_arbiters(user_data):
             if location_count == 2:
                 distance = calculate_distance_between(locations[0], locations[1])
                 relevance += 100 / (0.01 * distance + 1)
-            elif user_data["court"] and arbiter.court:
+            elif user_data.get("court", False) and arbiter.court:
                 locations = (Court.objects.filter(name=user_data["court"].lower()).first().location, arbiter.court.location)
                 distance = calculate_distance_between(locations[0], locations[1])
                 relevance += 100 / (0.01 * distance + 1)
         if user_data.get("languages", False) and arbiter.languages:
             languages = (
-            map(lambda n: Language.objects.filter(name=n).first(), user_data["languages"].lower()), arbiter.languages)
+            map(lambda n: Language.objects.filter(name=n).first(), json.loads(user_data["languages"].lower())), list(arbiter.languages.all()))
+            # print(list(languages[0]))
             languages = list(map(lambda n: map(lambda m: m.name, n), languages))
-            relevant_languages = set(list(languages[0]) + list(languages[1]))
+            relevant_languages = set(list(languages[0])) & set(list(languages[1]))
+            print(relevant_languages)
             relevance += len(relevant_languages) * 50
         if user_data.get("specializations", False) and arbiter.specializations:
             specializations = (
-            map(lambda n: Specialization.objects.filter(name=n).first(), user_data["specializations"].lower()),
-            arbiter.specializations)
+            map(lambda n: Specialization.objects.filter(name=n).first(), json.loads(user_data["specializations"].lower())),
+            list(arbiter.specializations.all()))
             specializations = list(map(lambda n: map(lambda m: m.name, n), specializations))
-            relevant_specializations = set(list(specializations[0]) + list(specializations[1]))
+            relevant_specializations = set(list(specializations[0])) & set(list(specializations[1]))
             relevance += len(relevant_specializations) * 50
         if user_data.get("court", False) and arbiter.court:
             court = Court.objects.filter(name=user_data["court"].lower()).first()
