@@ -8,7 +8,7 @@ from django.shortcuts import render
 from django.db import transaction
 from django.forms.models import model_to_dict
 from django.contrib.staticfiles.storage import staticfiles_storage
-from .serializers import ArbiterProfileSerializer, CreateUserProfileSerializer
+from .serializers import ArbiterProfileSerializer, CreateUserProfileSerializer, LocationSerializer, SpecializationSerializer, CourtSerializer, LanguageSerializer
 from rest_framework import viewsets
 from rest_framework import mixins
 from rest_framework.views import APIView
@@ -210,3 +210,10 @@ def get_relevant_arbiters(user_data):
     arbiters = list(ArbiterProfile.objects.all())
     print(determine_relevance(arbiters[1]))
     return sorted(arbiters, key=determine_relevance, reverse=True)
+
+
+class GetAllLocationsUnique(APIView):
+
+    def get(self, request):
+        queryset = Location.objects.distinct("name")
+        return Response()
