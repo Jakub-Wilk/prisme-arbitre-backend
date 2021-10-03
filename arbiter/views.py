@@ -8,7 +8,8 @@ from django.shortcuts import render
 from django.db import transaction
 from django.forms.models import model_to_dict
 from django.contrib.staticfiles.storage import staticfiles_storage
-from .serializers import ArbiterProfileSerializer, CreateUserProfileSerializer, LocationSerializer, SpecializationSerializer, CourtSerializer, LanguageSerializer
+from .serializers import ArbiterProfileSerializer, CreateUserProfileSerializer, LocationSerializer, \
+    SpecializationSerializer, CourtSerializer, LanguageSerializer
 from rest_framework import viewsets
 from rest_framework import mixins
 from rest_framework.views import APIView
@@ -23,6 +24,7 @@ class ArbiterViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.
                      viewsets.GenericViewSet):
     queryset = ArbiterProfile.objects.all()
     serializer_class = ArbiterProfileSerializer
+
     # permission_classes = (IsAuthenticatedOrReadOnly,)
 
     # TODO: Permisje nie działają
@@ -34,6 +36,7 @@ class ArbiterViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.
         serializer = ArbiterProfileSerializer(queryset, many=True)
         return Response(serializer.data)
         # return Response(queryset)
+
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
@@ -188,12 +191,15 @@ def get_relevant_arbiters(user_data):
                 distance = calculate_distance_between(locations[0], locations[1])
                 relevance += (abs(distance - 700) / 700) * 100
         if "languages" in user_data.keys() and arbiter.languages:
-            languages = (map(lambda n: Language.objects.filter(name=n).first(), user_data["languages"]), arbiter.languages)
+            languages = (
+            map(lambda n: Language.objects.filter(name=n).first(), user_data["languages"]), arbiter.languages)
             languages = list(map(lambda n: map(lambda m: m.name, n), languages))
             relevant_languages = set(list(languages[0]) + list(languages[1]))
             relevance += len(relevant_languages) * 50
         if "specializations" in user_data.keys() and arbiter.specializations:
-            specializations = (map(lambda n: Specialization.objects.filter(name=n).first(), user_data["specializations"]), arbiter.specializations)
+            specializations = (
+            map(lambda n: Specialization.objects.filter(name=n).first(), user_data["specializations"]),
+            arbiter.specializations)
             specializations = list(map(lambda n: map(lambda m: m.name, n), specializations))
             relevant_specializations = set(list(specializations[0]) + list(specializations[1]))
             relevance += len(relevant_specializations) * 50
@@ -212,8 +218,45 @@ def get_relevant_arbiters(user_data):
     return sorted(arbiters, key=determine_relevance, reverse=True)
 
 
-class GetAllLocationsUnique(APIView):
+class GetAllLocationsUnique(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    queryset = Location.objects.all()
 
-    def get(self, request):
-        queryset = Location.objects.distinct("name")
-        return Response()
+    serializer_class = LocationSerializer
+
+    def list(self, request):
+        queryset = Location.objects.all()
+        serialized = LocationSerializer(queryset, many=True)
+        return Response(serialized.data)
+
+
+class GetAllLanguagesUnique(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    queryset = Language.objects.all()
+
+    serializer_class = LanguageSerializer
+
+    def list(self, request):
+        queryset = Language.objects.all()
+        serialized = LanguageSerializer(queryset, many=True)
+        return Response(serialized.data)
+
+
+class GetAllSpecializationsUnique(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    queryset = Specialization.objects.all()
+
+    serializer_class = SpecializationSerializer
+
+    def list(self, request):
+        queryset = Specialization.objects.all()
+        serialized = SpecializationSerializer(queryset, many=True)
+        return Response(serialized.data)
+
+
+class GetAllCourtsUnique(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    queryset = Court.objects.all()
+
+    serializer_class = CourtSerializer
+
+    def list(self, request):
+        queryset = Court.objects.all()
+        serialized = CourtSerializer(queryset, many=True)
+        return Response(serialized.data)

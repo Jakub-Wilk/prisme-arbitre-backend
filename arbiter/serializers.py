@@ -7,25 +7,25 @@ from .models import ArbiterProfile, Language, Court, Location, Specialization
 class LanguageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Language
-        fields = ["name", ]
+        fields = ["id", "name"]
 
 
 class SpecializationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Specialization
-        fields = ["name", ]
+        fields = ["id", "name"]
 
 
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
-        fields = ["name", "lat", "long"]
+        fields = ["id", "name", "lat", "long"]
 
 
 class CourtSerializer(serializers.ModelSerializer):
     class Meta:
         model = Court
-        fields = ["location", "address"]
+        fields = ["id", "location", "address"]
 
 
 class SimpleArbiterProfileSerializer(serializers.ModelSerializer):
