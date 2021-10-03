@@ -27,6 +27,7 @@ class ArbiterProfile(models.Model):
     active = models.BooleanField(default=False, blank=True, null=True)
     birth_year = models.IntegerField(blank=True, null=True)
     experience = models.CharField(blank=True, null=True, max_length=65535)
+    verification_document = models.FileField(blank=True, null=True, upload_to="documents/")
 
     def __str__(self):
         return f"{self.pk} - Arbiter Profile"
@@ -36,12 +37,6 @@ class Location(models.Model):
     name = models.CharField(max_length=255)
     lat = models.FloatField(blank=True, null=True)
     long = models.FloatField(blank=True, null=True)
-
-
-class Document(models.Model):
-    arbiter = models.ForeignKey("ArbiterProfile", blank=False, null=False, on_delete=models.CASCADE)
-    file = models.FileField(blank=False, null=False, upload_to="documents/")
-    name = models.CharField(max_length=255, blank=True, null=True)
 
 
 class Language(models.Model):

@@ -1,12 +1,8 @@
 from django.contrib import admin
-from .models import ArbiterProfile, Court, Language, Specialization, Document, Location
+from .models import ArbiterProfile, Court, Language, Specialization, Location
 from django.db.models import Sum
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-
-
-class DocumentInline(admin.StackedInline):
-    model = Document
 
 
 class LanguageInline(admin.TabularInline):
@@ -31,7 +27,7 @@ class ArbiterProfileAdmin(admin.ModelAdmin):
 
     get_name.short_description = "name"
 
-    inlines = (LanguageInline, SpecializationInline, DocumentInline)
+    inlines = (LanguageInline, SpecializationInline)
 
 def generate_random_arbiters(*args):
     return HttpResponseRedirect(reverse("get-arbiters-form"))

@@ -2,8 +2,8 @@ import json, random, math
 
 from django.contrib.auth.models import User
 
-from .jwt import CustomTokenObtainPairSerializer
 from .models import ArbiterProfile, Location, Court, Specialization, Language
+from .jwt import CustomTokenObtainPairSerializer, CustomTokenRefreshSerializer
 from django.shortcuts import render
 from django.db import transaction
 from django.forms.models import model_to_dict
@@ -15,7 +15,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 
 class ArbiterViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.DestroyModelMixin,
@@ -37,6 +37,10 @@ class ArbiterViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
+
+
+class CustomTokenRefreshView(TokenRefreshView):
+    serializer_class = CustomTokenRefreshSerializer
 
 
 class UserViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
