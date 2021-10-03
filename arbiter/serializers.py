@@ -25,7 +25,7 @@ class LocationSerializer(serializers.ModelSerializer):
 class CourtSerializer(serializers.ModelSerializer):
     class Meta:
         model = Court
-        fields = ["id", "location", "address"]
+        fields = ["id", "location", "address", "name"]
 
 
 class SimpleArbiterProfileSerializer(serializers.ModelSerializer):
