@@ -2,7 +2,7 @@ import json, random
 
 from django.contrib.auth.models import User
 
-from .jwt import CustomTokenObtainPairSerializer
+from .jwt import CustomTokenObtainPairSerializer, CustomTokenRefreshSerializer
 from .models import ArbiterProfile, Location
 from django.shortcuts import render
 from django.contrib.staticfiles.storage import staticfiles_storage
@@ -13,7 +13,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 
 class ArbiterViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.DestroyModelMixin,
@@ -36,10 +36,13 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
 
-class UserViewSet(mixins.CreateModelMixin,viewsets.GenericViewSet):
+class CustomTokenRefreshView(TokenRefreshView):
+    serializer_class = CustomTokenRefreshSerializer
+
+
+class UserViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     queryset = User.objects.all()
     serializer_class = CreateUserProfileSerializer
-
 
 
 class GenerateArbiters(APIView):
