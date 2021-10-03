@@ -56,7 +56,7 @@ class ArbiterProfileSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(ModelSerializer):
-    arbiter_profile = SimpleArbiterProfileSerializer(read_only=True)
+    arbiter_profile = ArbiterProfileSerializer(read_only=True)
 
     class Meta:
         model = User
